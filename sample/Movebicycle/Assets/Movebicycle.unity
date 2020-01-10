@@ -236,7 +236,7 @@ AudioListener:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 119141383}
-  m_Enabled: 1
+  m_Enabled: 0
 --- !u!20 &119141385
 Camera:
   m_ObjectHideFlags: 0
@@ -431,6 +431,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 2
+  itemnum: 0
 --- !u!1 &895103949
 GameObject:
   m_ObjectHideFlags: 0
@@ -526,6 +527,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: cycle2
       objectReference: {fileID: 0}
+    - target: {fileID: -5975033157549033438, guid: e1759364a3a4b4948afdf7b24b1ed804,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 1.24
+      objectReference: {fileID: 0}
     - target: {fileID: -4216859302048453862, guid: e1759364a3a4b4948afdf7b24b1ed804,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -595,11 +601,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalScale.z
       value: 0.1
-      objectReference: {fileID: 0}
-    - target: {fileID: -5975033157549033438, guid: e1759364a3a4b4948afdf7b24b1ed804,
-        type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 1.24
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e1759364a3a4b4948afdf7b24b1ed804, type: 3}
@@ -683,7 +684,7 @@ PrefabInstance:
     - target: {fileID: 1579282987822796750, guid: d124f0f28d3fd4c96aab825ad0346428,
         type: 3}
       propertyPath: m_LocalScale.z
-      value: 100
+      value: 5
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d124f0f28d3fd4c96aab825ad0346428, type: 3}
