@@ -23,6 +23,7 @@ public class BicycleController2 : MonoBehaviour
     public float multi_x = 0.02f;    //空中前傾姿勢の係数
     public float multi_handle = 0.2f;
     public float m_horizontal_speed;
+    private float turnDeg = 20;
 
     void Start()
     {
@@ -34,37 +35,44 @@ public class BicycleController2 : MonoBehaviour
     void Update()
     {
 
-        //地面についている間はハンドルおよびアクセル操作ができる
+        //角度・速度取得
+        Quaternion frot;
         m_frontSpeed = Vector3.Dot(m_rigidbody.velocity, m_rigidbody.transform.forward);
         localAngles = transform.localEulerAngles;
         angles = transform.eulerAngles;
+        
+        //地面についている間はハンドルおよびアクセル操作ができる
         if (onGround)
         {
-            if (m_frontSpeed < max_speed)
-            {
-                m_rigidbody.AddRelativeForce(0, 0, force * Input.GetAxis("Vertical"));
-            }
-
-            
-            rot = Quaternion.Euler(localAngles.x, localAngles.y,
-                      Input.GetAxis("Horizontal") * -maxDeg) *
-                  Quaternion.AngleAxis(m_frontSpeed * Input.GetAxis("Horizontal") * multi_handle, Vector3.up);
-                  
-            m_rigidbody.MoveRotation(rot);
+            frot = GroundRun();
         }
         else //空中時の動作
         {
-
-            //x軸の回転をデフォ(rot)に加える
-            rot *= Quaternion.AngleAxis(Input.GetAxis("Vertical") * maxDeg * multi_x, Vector3.right);
-            //z軸の回転を負荷＆適用
-            m_rigidbody.MoveRotation(rot * Quaternion.Euler(0, 0,
-                                         Input.GetAxis("Horizontal") * -maxDeg));
-            
-
-            //回転テスト
-            //m_rigidbody.MoveRotation(m_rigidbody.rotation * Quaternion.AngleAxis(1, transform.right));
+            frot = AirRun();
         }
+        m_rigidbody.MoveRotation(frot);
+        
+        
+    }
+
+    Quaternion GroundRun()
+    {
+
+        if (m_frontSpeed < max_speed)
+        {
+            m_rigidbody.AddRelativeForce(0, 0, force * Input.GetAxis("Vertical"));
+        }
+
+        rot = Quaternion.Euler(localAngles.x, localAngles.y,
+                  Input.GetAxis("Horizontal") * -maxDeg) *
+              Quaternion.AngleAxis(m_frontSpeed * Input.GetAxis("Horizontal") * multi_handle, Vector3.up);
+
+
+        /*    //簡易コードにしようとした残骸
+        rot = transform.localRotation * Quaternion.AngleAxis(m_frontSpeed * Input.GetAxis("Horizontal") * multi_handle, transform.up);
+
+        m_rigidbody.MoveRotation(rot * Quaternion.AngleAxis(Input.GetAxis("Horizontal") * -maxDeg, Vector3.forward));
+        */
         
         //横方向の滑り止め
         m_horizontal_speed = Vector3.Dot(m_rigidbody.velocity, m_rigidbody.transform.right);
@@ -72,6 +80,33 @@ public class BicycleController2 : MonoBehaviour
         {
             m_rigidbody.velocity -= Math.Sign(m_horizontal_speed) * transform.right * 1;
         }
+
+        return rot;
+    }
+
+    Quaternion AirRun()
+    {
+
+        //x軸の回転をデフォ(rot)に加える
+        rot *= Quaternion.AngleAxis(Input.GetAxis("Vertical") * maxDeg * multi_x, Vector3.right);
+
+        //指定角度以上なら旋回
+        float dDeg = Math.Abs(Input.GetAxis("Horizontal") * maxDeg) - turnDeg;
+        if (dDeg >= 0)
+        {
+            rot *= Quaternion.AngleAxis(Input.GetAxis("Horizontal")
+                                        * multi_handle * dDeg, new Vector3(0,1, 0));
+        }
+            
+        //z軸の回転を負荷＆適用
+        return rot * Quaternion.AngleAxis(Input.GetAxis("Horizontal") * -maxDeg, Vector3.forward);
+
+        
+
+
+
+        //回転テスト
+        //m_rigidbody.MoveRotation(m_rigidbody.rotation * Quaternion.AngleAxis(1, transform.right));
     }
     
     
