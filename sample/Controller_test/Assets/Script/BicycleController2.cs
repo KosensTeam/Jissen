@@ -12,17 +12,18 @@ public class BicycleController2 : MonoBehaviour
     
     private Rigidbody m_rigidbody = null;
     private Quaternion rot;
-    private Vector3 localAngles;
+    public Vector3 localAngles;
+    private Vector3 angles;
+    private bool onGround { get; set; }
     public float max_speed = 100;
     public float max_right_speed = 10;
     public float force = 1000;
     public float m_speed;
-    public bool onGround { get; set; }
-    public float deg;
+    public float maxDeg;    //最大車体傾き
     public float multi_x = 0.02f;    //空中前傾姿勢の係数
     public float multi_handle = 0.2f;
     public float m_anglex;    //x軸の角度
-    
+
     void Start()
     {
         m_rigidbody = GetComponent<Rigidbody>();
@@ -35,7 +36,8 @@ public class BicycleController2 : MonoBehaviour
 
         //地面についている間はハンドルおよびアクセル操作ができる
         m_speed = Vector3.Dot(m_rigidbody.velocity, m_rigidbody.transform.forward);
-        localAngles = transform.eulerAngles;
+        localAngles = transform.localEulerAngles;
+        angles = transform.eulerAngles;
         if (onGround)
         {
             if (m_speed < max_speed)
@@ -44,16 +46,21 @@ public class BicycleController2 : MonoBehaviour
             }
 
             rot = Quaternion.Euler(localAngles.x, localAngles.y,
-                      Input.GetAxis("Horizontal") * -deg) *
+                      Input.GetAxis("Horizontal") * -maxDeg) *
                   Quaternion.AngleAxis(m_speed * Input.GetAxis("Horizontal") * multi_handle, Vector3.up);
             m_rigidbody.MoveRotation(rot);
         }
         else //空中時の動作
         {
-            m_anglex = localAngles.x + Input.GetAxis("Vertical") * deg * multi_x;
-            rot = Quaternion.Euler(m_anglex, localAngles.y,
-                Input.GetAxis("Horizontal") * -deg);
-            m_rigidbody.MoveRotation(rot);
+
+            //x軸の回転をデフォ(rot)に加える
+            rot *= Quaternion.AngleAxis(Input.GetAxis("Vertical") * maxDeg * multi_x, Vector3.right);
+            //z軸の回転を負荷＆適用
+            m_rigidbody.MoveRotation(rot * Quaternion.Euler(0, 0,
+                                         Input.GetAxis("Horizontal") * -maxDeg));
+
+            //回転テスト
+            //m_rigidbody.MoveRotation(m_rigidbody.rotation * Quaternion.AngleAxis(1, transform.right));
         }
         
         //横方向の滑り止め
