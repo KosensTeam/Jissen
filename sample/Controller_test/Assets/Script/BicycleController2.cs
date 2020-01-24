@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
-using UnityEngine.iOS;
 
 public class BicycleController2 : MonoBehaviour
 {
@@ -19,11 +18,13 @@ public class BicycleController2 : MonoBehaviour
     public float max_right_speed = 10;
     public float force = 1000;
     public float m_frontSpeed;
+    private Vector3 m_groundVelocity;
     public float maxDeg;    //最大車体傾き
     public float multi_x = 0.02f;    //空中前傾姿勢の係数
     public float multi_handle = 0.2f;
     public float m_horizontal_speed;
-    private float turnDeg = 20;
+    public float turnDeg = 20;
+    public float airSpeedMulti = 2;
 
     void Start()
     {
@@ -57,6 +58,7 @@ public class BicycleController2 : MonoBehaviour
 
     Quaternion GroundRun()
     {
+        m_groundVelocity = m_rigidbody.velocity;
 
         if (m_frontSpeed < max_speed)
         {
@@ -80,7 +82,6 @@ public class BicycleController2 : MonoBehaviour
         {
             m_rigidbody.velocity -= Math.Sign(m_horizontal_speed) * transform.right * 1;
         }
-
         return rot;
     }
 
@@ -96,14 +97,15 @@ public class BicycleController2 : MonoBehaviour
         {
             rot *= Quaternion.AngleAxis(Input.GetAxis("Horizontal")
                                         * multi_handle * dDeg, new Vector3(0,1, 0));
+            //空中での速度変換
+            m_rigidbody.velocity =  Quaternion.AngleAxis(Input.GetAxis("Horizontal")
+                                                         * multi_handle * dDeg, new Vector3(0,1, 0)) * m_rigidbody.velocity;
+
         }
             
+                
         //z軸の回転を負荷＆適用
         return rot * Quaternion.AngleAxis(Input.GetAxis("Horizontal") * -maxDeg, Vector3.forward);
-
-        
-
-
 
         //回転テスト
         //m_rigidbody.MoveRotation(m_rigidbody.rotation * Quaternion.AngleAxis(1, transform.right));
