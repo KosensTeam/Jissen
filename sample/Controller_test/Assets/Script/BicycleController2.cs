@@ -9,7 +9,8 @@ public class BicycleController2 : MonoBehaviour
 {
     //直に動かして操作
     
-    private bool onGround { get; set; }
+    public bool onGround { get; set; }
+    public bool onWall { get; set; }
     private Rigidbody m_rigidbody = null;
     private Quaternion rot;
     public Vector3 localAngles;
@@ -49,6 +50,7 @@ public class BicycleController2 : MonoBehaviour
         }
         else //空中時の動作
         {
+            
             frot = AirRun();
         }
         m_rigidbody.MoveRotation(frot);
@@ -110,7 +112,17 @@ public class BicycleController2 : MonoBehaviour
         //回転テスト
         //m_rigidbody.MoveRotation(m_rigidbody.rotation * Quaternion.AngleAxis(1, transform.right));
     }
+
+    public bool WallCheck()
+    {
+        return true;
+    }
     
-    
+    void WallRun()
+    {
+        
+    }
+
+
 }
 

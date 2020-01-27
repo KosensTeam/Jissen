@@ -12,6 +12,7 @@
           <e p="BicycleController.cs" t="Include" />
           <e p="BicycleController2.cs" t="Include" />
           <e p="GroundChecker.cs" t="Include" />
+          <e p="moveFoward.cs" t="Include" />
           <e p="SimpleCarController.cs" t="Include" />
           <e p="suspension.cs" t="Include" />
           <e p="TransformDebug.cs" t="Include" />
