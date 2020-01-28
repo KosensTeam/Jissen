@@ -84,7 +84,13 @@ public class BicycleController2 : MonoBehaviour
         {
             m_rigidbody.velocity -= Math.Sign(m_horizontal_speed) * transform.right * 1;
         }
-        return rot;
+        
+        //常時減速
+        if (Input.GetAxis("Vertical") == 0)
+        {
+            
+        } 
+            return rot;
     }
 
     Quaternion AirRun()
